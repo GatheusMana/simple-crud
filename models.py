@@ -1,9 +1,15 @@
+#models.py
 class Employee():
-    def __init__(self, name: str, role: str, salary: float):
+    def __init__(self, name: str, role: str, salary: float, id: int = None):
+        self.__id = id
         self.name = name
         self.role = role
         self.salary = salary
     
+    @property
+    def id(self):
+        return self.__id
+
     @property
     def name(self):
         return self.__name
@@ -15,6 +21,13 @@ class Employee():
     @property
     def salary(self):
         return self.__salary
+    
+    @id.setter
+    def id(self, new_id):
+        if not isinstance(new_id, int):
+            raise TypeError("ID must be an integer")
+        self.__id = new_id
+
     
     @name.setter
     def name(self, new_name):

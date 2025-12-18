@@ -1,3 +1,4 @@
+#repository.py
 from models import Employee
 from database import connection, cursor
 
@@ -13,7 +14,7 @@ def get_all_employees() -> list:
     employee_list = []
 
     for row in employee_table:
-        _, *employee_data = row
-        employee_list.append(Employee(*employee_data))
-        
+        id, *employee_data = row
+        employee_list.append(Employee(*employee_data, id))
+
     return employee_list
