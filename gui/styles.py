@@ -4,8 +4,12 @@ autor_font_style = ("Arial", 8, "italic")
 window_geometry_size = "400x300"
 
 
-main_window = {
+enter_window = {
     'BUTTON_WIDTH': 10,
     'BUTTON_PADY': 5
 }
 
+template_window = {
+    'BUTTON_WIDTH': 25,
+    'BUTTON_PADY': 5
+}
