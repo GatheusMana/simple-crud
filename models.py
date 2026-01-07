@@ -27,7 +27,6 @@ class Employee():
         if not isinstance(new_id, int):
             raise TypeError("ID must be an integer")
         self.__id = new_id
-
     
     @name.setter
     def name(self, new_name):

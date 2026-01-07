@@ -1,43 +1,63 @@
 #repository.py
-from models import Employee
-from database import connection, cursor
+from Models import Employee
+from DatabaseManager import DatabaseManager
 
 
-def create_employee(employee_obj) -> bool:
-    cursor.execute("INSERT INTO employees (name, role, salary) VALUES (?, ?, ?)", 
+def add_employee(employee_obj) -> tuple:
+    try:
+        with DatabaseManager("data.db") as cursor:
+            cursor.execute("INSERT INTO employees (name, role, salary) VALUES (?, ?, ?)", 
                     (employee_obj.name, employee_obj.role, employee_obj.salary))
     
-    connection.commit()
-    return cursor.rowcount > 0
+            return (True, f"Success! Welcome {employee_obj.name}")
+    except Exception as e:
+        return (False, f"Repository error: {e}")
+
+def get_employee(str_id) -> tuple:
+    try:
+        id = int(str_id)
+
+        with DatabaseManager("data.db") as cursor:
+            employee_data = cursor.execute("SELECT * FROM employees WHERE id = ?", (id,)).fetchone()
+            if not employee_data:
+                return (True, None)
+            emp_id, name, role, salary = employee_data
+            return (True, Employee(name, role, salary, emp_id))
     
+    except ValueError as e:
+        return (False, f"ID must be a integer number")
+    except Exception as e:
+        return (False, f"Repository error: {e}")
+        
 
-def get_employee(id) -> Employee:
-    employee_data = cursor.execute("SELECT * FROM employees WHERE id = ?", (id,)).fetchone()
-    if not employee_data:
-        return None
-    _, *employee = employee_data
-    return Employee(*employee, id)
+def get_all_employees() -> tuple:
+    try:
+        with DatabaseManager("data.db") as cursor:
+            employee_table = cursor.execute("SELECT * FROM employees").fetchall()
+            employee_list = []
 
+            for row in employee_table:
+                id, *employee_data = row
+                employee_list.append(Employee(*employee_data, id))
 
-def get_all_employees() -> list:
-    employee_table = cursor.execute("SELECT * FROM employees").fetchall()
-    employee_list = []
-
-    for row in employee_table:
-        id, *employee_data = row
-        employee_list.append(Employee(*employee_data, id))
-
-    return employee_list
+            return (True, employee_list)
+    
+    except Exception as e:
+        return (False, f"Repository error: {e}")
 
 def update_employee(name, role, salary, id) -> bool:
-    cursor.execute("UPDATE employees SET name = ?, role = ?, salary = ? WHERE id = ?",
-                  (name, role, salary, id))
-        
-    connection.commit()
-    return cursor.rowcount > 0
+    try:
+        with DatabaseManager("data.db") as cursor:
+            cursor.execute("UPDATE employees SET name = ?, role = ?, salary = ? WHERE id = ?",
+                            (name, role, salary, id))    
+            return (True, "Success")
+    except Exception as e:
+        return(False, f"Repository error: {e}")
 
 def delete_employee(employee_id) -> bool:
-    cursor.execute("DELETE FROM employees WHERE id = ?", (employee_id,))
-    connection.commit()
-    
-    return cursor.rowcount > 0
+    try:
+        with DatabaseManager("data.db") as cursor:
+            cursor.execute("DELETE FROM employees WHERE id = ?", (employee_id,))
+            return (True, "Success")
+    except Exception as e:
+        return (False, f"Repository error: {e}")
