@@ -1,3 +1,4 @@
+#App.py
 import tkinter as tk
 from gui.Forms import AppWindow
 from DatabaseManager import DatabaseManager

@@ -1,4 +1,4 @@
-#models.py
+#Models.py
 class Employee():
     def __init__(self, name: str, role: str, salary: float, id: int = None):
         self.__id = id

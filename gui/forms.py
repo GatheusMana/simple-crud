@@ -8,9 +8,6 @@ import Repository as repo
 import Models as models
 
 
-class RequiredFieldsError(Exception):
-    """Raised when required fields are empty"""
-    pass
 
 class AppWindow(tk.Tk):
     def __init__(self):
@@ -74,39 +71,21 @@ class InsertEmployeeWindow(TemplateWindow):
         super().__init__(base)
 
     def submit_form(self):
-        try:
 
-            data = {
-                "Name": self.name_input.get().strip(),
-                "Role": self.role_input.get().strip(),
-                "Salary": self.salary_input.get().strip()
-            }    
-
-            if not all(data.values()):
-                raise RequiredFieldsError("All fields are required!")
-            
-            new_employee = models.Employee(data['Name'], data['Role'], float(data['Salary']))
-            status, message = repo.add_employee(new_employee)
-
-            print(f"Form Submitted: Name: {data['Name']}, Role: {data['Role']}, Salary: {data['Salary']}")
-            
-            if status:
-                tk.messagebox.showinfo("Success", message)
-            else:
-                raise Exception(message)
-
-        except RequiredFieldsError as e:
-            messagebox.showerror("Input Error", str(e))
-
-        except TypeError as e:
-            messagebox.showerror("Input Error", str(e))
+        data = {
+            "Name": self.name_input.get().strip(),
+            "Role": self.role_input.get().strip(),
+            "Salary": self.salary_input.get().strip()
+        }    
         
-        except ValueError as e:
-            messagebox.showerror("Input Error", str(e))
+        status, result = repo.add_employee(data['Name'], data['Role'], data['Salary'])
+
+        print(f"Form Submitted: Name: {data['Name']}, Role: {data['Role']}, Salary: {data['Salary']}")
         
-        except Exception as e:
-            messagebox.showerror("Fatal Error", f"An unexpected error occurred: {e}")
-            self.destroy()
+        if status:
+            tk.messagebox.showinfo("Success", result)
+        else:
+            messagebox.showerror("Error", result)
 
     
     def generate_widgets(self):
@@ -139,20 +118,20 @@ class ReadOneEmployeeWindow(TemplateWindow):
     
     def submit_form(self):
         
-        try:
-            #Retrieve data
-            employee_id = self.id_input.get().strip()
+        employee_id = self.id_input.get().strip()
 
-            employee_data = repo.get_employee(id)
+        status, result = repo.get_employee(employee_id)
 
-            if not employee_data:
-                self.empty_employee_list_label = tk.Label(self, text="Employee table is empty", font=("Arial", 14,"bold"))
-                self.empty_employee_list_label.pack(pady=50)
-            else:
+        if not status:
+            messagebox.showerror("Database Error", result)
 
-                ...
-        except Exception as e:
-            ...
+        elif not result:
+            self.empty_employee_list_label = tk.Label(self, text="Employee table is empty", font=("Arial", 14,"bold"))
+            self.empty_employee_list_label.pack(pady=50)
+        else:
+            self.result_label = tk.Label(self, text=f"{result.name}, {result.role}, R${result.salary:.2f}", font=("Arial", 14,"bold"))
+            self.result_label.pack(pady=50)
+
     
     def generate_widgets(self):
         self.title("Read One Employee")
@@ -160,11 +139,14 @@ class ReadOneEmployeeWindow(TemplateWindow):
         self.title_label = tk.Label(self, text="Read One Employee", font=("Arial", 16, "bold"))
         self.title_label.pack(pady=20)
 
-        self.id_label = tk.Label(self, text="Employee Id")
+        self.id_label = tk.Label(self, text="Employee ID")
         self.id_label.pack(pady=(10,5))
 
         self.id_input = tk.Entry(self)
         self.id_input.pack(pady=5)
+
+        self.submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
+        self.submit_btn.pack(pady=5)
 
 class ReadAllEmployeeWindow(TemplateWindow):
     def __init__(self,base):
@@ -172,9 +154,6 @@ class ReadAllEmployeeWindow(TemplateWindow):
     
     def generate_widgets(self):
         self.title("Read All Employees")
-
-        self.title_label = tk.Label(self, text="Employee Table", font=("Arial", 16, "bold"))
-        self.title_label.pack(pady=20)
 
         status, result = repo.get_all_employees()
 
@@ -186,6 +165,9 @@ class ReadAllEmployeeWindow(TemplateWindow):
             self.empty_employee_list_label.pack(pady=50)
         
         else:
+            self.title_label = tk.Label(self, text="Employee Table", font=("Arial", 16, "bold"))
+            self.title_label.pack(pady=20)
+
             self.employee_table_frame = tk.Frame(self)
             self.employee_table_frame.pack(pady=10)
 
@@ -211,9 +193,85 @@ class ReadAllEmployeeWindow(TemplateWindow):
                 self.employee_table_tree.insert('', tk.END, values=(employee.id,employee.name,employee.role, employee.salary))
 
 class UpdateEmployeeWindow(TemplateWindow):
-   def __init__(self,base):
+    def __init__(self,base):
         super().__init__(base)
+    
+    def submit_form(self):
+        data = {
+            "ID" : self.id_input.get().strip(),
+            "Name": self.name_input.get().strip(),
+            "Role": self.role_input.get().strip(),
+            "Salary": self.salary_input.get().strip()
+        }    
+        
+        status, result = repo.update_employee(data['Name'], data['Role'], data['Salary'], data["ID"])
+
+        print(f"Form Submitted: Name: {data['Name']}, Role: {data['Role']}, Salary: {data['Salary']} for Employee: {data["ID"]}")
+        
+        if status:
+            tk.messagebox.showinfo("Success", result)
+        else:
+            messagebox.showerror("Error", result)
+
+    def generate_widgets(self):
+        self.title("Update Employee")
+
+        self.title_label = tk.Label(self, text="Update Employee", font=("Arial", 16, "bold"))
+        self.title_label.pack(pady=20)
+
+        self.id_label = tk.Label(self, text="Employee ID")
+        self.id_label.pack(pady=(10,5))
+
+        self.id_input = tk.Entry(self)
+        self.id_input.pack(pady=5)
+
+        self.name_label = tk.Label(self, text="Employee Name")
+        self.name_label.pack(pady=(10,5), expand=True)
+
+        self.name_input = tk.Entry(self)
+        self.name_input.pack(pady=5, expand=True)
+
+        self.role_label = tk.Label(self, text="Employee Role")
+        self.role_label.pack(pady=(10,5), expand=True)
+
+        self.role_input = tk.Entry(self)
+        self.role_input.pack(pady=5, expand=True)
+
+        self.salary_label = tk.Label(self, text="Employee Salary")
+        self.salary_label.pack(pady=(10,5), expand=True)
+
+        self.salary_input = tk.Entry(self)
+        self.salary_input.pack(pady=5, expand=True)
+
+        self.submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
+        self.submit_btn.pack(pady=5, expand=True)
 
 class DeleteEmployeeWindow(TemplateWindow):
     def __init__(self,base):
         super().__init__(base)
+
+    def submit_form(self):
+         
+        employee_id = self.id_input.get().strip()
+
+        status, result = repo.delete_employee(employee_id)
+        
+        if status:
+            tk.messagebox.showinfo("Success", result)
+        else:
+            messagebox.showerror("Error", result)
+    
+    def generate_widgets(self):
+        self.title("Delete Employee")
+
+        self.title_label = tk.Label(self, text="Delete Employee", font=("Arial", 16, "bold"))
+        self.title_label.pack(pady=20)
+
+        self.id_label = tk.Label(self, text="Employee ID")
+        self.id_label.pack(pady=(10,5))
+
+        self.id_input = tk.Entry(self)
+        self.id_input.pack(pady=5)
+
+        self.submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
+        self.submit_btn.pack(pady=5)

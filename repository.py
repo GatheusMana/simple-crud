@@ -1,36 +1,65 @@
-#repository.py
+#Repository.py
 from Models import Employee
 from DatabaseManager import DatabaseManager
 
+class RequiredFieldsError(Exception):
+    """Raised when required fields are empty"""
+    pass
 
-def add_employee(employee_obj) -> tuple:
+def database_is_empty():
     try:
+         with DatabaseManager("data.db") as cursor:
+            count = cursor.execute("SELECT COUNT(*) FROM employees").fetchone()[0]
+            return count == 0
+    
+    except Exception as e:
+        return (False, f"Repository error: {e}")
+
+def add_employee(name, role, salary) -> tuple:
+    if not all([name, role, salary]):
+        raise RequiredFieldsError("All fields are required!")
+
+    try:
+
+        employee_obj = Employee(name, role, float(salary))
+
         with DatabaseManager("data.db") as cursor:
             cursor.execute("INSERT INTO employees (name, role, salary) VALUES (?, ?, ?)", 
                     (employee_obj.name, employee_obj.role, employee_obj.salary))
+            
+            return (True, f"Success! Welcome {employee_obj.name}!")
     
-            return (True, f"Success! Welcome {employee_obj.name}")
+    except RequiredFieldsError as e:
+        return (False, f"Input Error {e}")
+    except TypeError as e:
+        return (False, f"Input Error {e}")
+    except ValueError as e:
+        return (False, f"Input Error {e}")
     except Exception as e:
         return (False, f"Repository error: {e}")
 
 def get_employee(str_id) -> tuple:
+    if database_is_empty():
+        return (True, None)
+    
     try:
         id = int(str_id)
 
         with DatabaseManager("data.db") as cursor:
             employee_data = cursor.execute("SELECT * FROM employees WHERE id = ?", (id,)).fetchone()
-            if not employee_data:
-                return (True, None)
             emp_id, name, role, salary = employee_data
             return (True, Employee(name, role, salary, emp_id))
     
     except ValueError as e:
-        return (False, f"ID must be a integer number")
+        return (False, f"ID must be a integer number!")
     except Exception as e:
         return (False, f"Repository error: {e}")
         
 
 def get_all_employees() -> tuple:
+    if database_is_empty():
+        return (True, None)
+    
     try:
         with DatabaseManager("data.db") as cursor:
             employee_table = cursor.execute("SELECT * FROM employees").fetchall()
@@ -46,18 +75,39 @@ def get_all_employees() -> tuple:
         return (False, f"Repository error: {e}")
 
 def update_employee(name, role, salary, id) -> bool:
+    if database_is_empty():
+        return (False, "Database is empty")
+    
+    if not all([name, role, salary, id]):
+        raise RequiredFieldsError("All fields are required!")
+    
     try:
+
+        new_employee = Employee(name=name,role=role,salary=float(salary),id=id)
+
         with DatabaseManager("data.db") as cursor:
             cursor.execute("UPDATE employees SET name = ?, role = ?, salary = ? WHERE id = ?",
-                            (name, role, salary, id))    
-            return (True, "Success")
+                            (new_employee.name, new_employee.role, new_employee.salary, new_employee.id))    
+            
+            return (True, f"Success! New data for Employee {new_employee.id}!")
     except Exception as e:
         return(False, f"Repository error: {e}")
+    except RequiredFieldsError as e:
+        return (False, f"Input Error {e}")
+    except TypeError as e:
+        return (False, f"Input Error {e}")
+    except ValueError as e:
+        return (False, f"Input Error {e}")
+    except Exception as e:
+        return (False, f"Repository error: {e}")
+
 
 def delete_employee(employee_id) -> bool:
+    if database_is_empty():
+        return (False, "Database is empty")
     try:
         with DatabaseManager("data.db") as cursor:
             cursor.execute("DELETE FROM employees WHERE id = ?", (employee_id,))
-            return (True, "Success")
+            return (True, f"Employee {employee_id} was deleted successfully!")
     except Exception as e:
         return (False, f"Repository error: {e}")
