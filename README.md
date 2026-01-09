@@ -1,29 +1,76 @@
-A. Título e Descrição Curta
-O nome do projeto e uma frase que resuma o valor. Exemplo: "Employee CRUD: Sistema de gestão com arquitetura modular e persistência segura."
+# Simple CRUD – Python Desktop Application
 
-B. Tecnologias Utilizadas
-Uma lista simples. Como você foca em IA, é importante mostrar que domina a base:
+A simple **CRUD (Create, Read, Update, Delete)** desktop application built with **Python**, featuring a graphical user interface and a local database.
 
-Python 3.x
+This project was developed as a hands-on exercise to practice software structuring, object-oriented programming, and full data flow from user interface to database.
 
-Tkinter (GUI)
+---
 
-SQLite3 (Database)
+## 🧩 Features
 
-C. Arquitetura e Decisões de Design (O diferencial!)
-Aqui é onde você brilha. Explique as escolhas que discutimos:
+- Create new employees
+- Read a single employee by ID
+- List all employees
+- Update employee data
+- Delete employees
+- Graphical interface for all operations
 
-Repository Pattern: Explique que isolou a lógica de dados da interface para facilitar testes e futuras integrações (como modelos de ML).
+---
 
-Context Managers: Destaque o uso do with para garantir a integridade do banco de dados (RAII).
+## 🛠️ Technologies Used
 
-Result Pattern: Mencione que usa tuplas de retorno (status, data) para um fluxo de erro previsível.
+- **Python**
+- **Tkinter** – graphical user interface
+- **SQLite** – local database
+- **Object-Oriented Programming (OOP)**
 
-D. Como Executar o Projeto
-Passos básicos:
+---
 
-Clonar o repositório.
+## 🗂️ Project Structure
 
-Criar ambiente virtual: python -m venv venv.
+. <br>
+├── App.py # Application entry point <br>
+├── DatabaseManager.py # Database connection and lifecycle management <br>
+├── Repository.py # Data access layer (CRUD operations) <br>
+├── Models.py # Domain models <br>
+├── gui/ <br>
+│ ├── Forms.py # GUI windows and user interactions <br>
+│ └── Styles.py # Centralized UI styles <br>
+└── data.db # SQLite database <br>
 
-Executar o app: python app.py.
+---
+
+## ▶️ How to Run
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/your-username/simple-crud.git
+   ```
+2. Navigate to the project folder:
+
+    ```bash
+    cd simple-crud
+    ```
+3. Run the application:
+
+    ```bash
+    python App.py
+    ```
+
+No external dependencies are required.
+
+## 🎯 Learning Goals
+The main goals of this project were:
+
+- Practice building a complete CRUD system
+- Understand data flow between GUI, business logic, and database
+- Apply object-oriented principles in a real project
+- Learn when to prioritize structure and when to prioritize delivery-
+- Finish and ship a functional application
+
+## 📌 Notes
+This project focuses on clarity and completeness, not production-level optimizations or advanced UI/UX patterns.
+It was intentionally kept simple to reinforce core concepts.
+
+## 👤 Author
+Developed by Matheus Gana.
