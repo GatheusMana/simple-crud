@@ -38,8 +38,9 @@ class TemplateWindow(tk.Toplevel):
         self.geometry(WINDOW_SIZE)
         self.configure(bg=WINDOW_BG_COLOR)
 
-        #Abstract func to generete widgets
+        #Model func to generete widgets
         self.generate_widgets()
+        
         #Back Button
         tk.Button(self, text="Back", **BACK_BTN_STYLE,command=self.destroy).pack(side="bottom", pady=15)
         self.focus_force()
@@ -130,11 +131,11 @@ class ReadOneEmployeeWindow(TemplateWindow):
             messagebox.showerror("Database Error", result)
             self.destroy()
         elif not result:
-            self.empty_employee_list_label = tk.Label(self, text="Employee table is empty", font=("Arial", 14,"bold"))
-            self.empty_employee_list_label.pack(pady=50)
+            self.empty_employee_list_label = tk.Label(self, text="Employee table is empty", **RESULT_LABEL_STYLE)
+            self.empty_employee_list_label.pack(**RESULT_LABEL_CONFIG)
         else:
-            self.result_label = tk.Label(self, text=f"{result.name}, {result.role}, R${result.salary:.2f}", font=("Arial", 14,"bold"))
-            self.result_label.pack(pady=50)
+            self.result_label = tk.Label(self, text=f"{result.name}, {result.role}, R${result.salary:.2f}", **RESULT_LABEL_STYLE)
+            self.result_label.pack(**RESULT_LABEL_CONFIG)
 
     
     def generate_widgets(self):
@@ -168,7 +169,7 @@ class ReadAllEmployeeWindow(TemplateWindow):
 
         else:
             self.title_label = tk.Label(self, text="Employee Table", **MAIN_WINDOW_TITLE_STYLE)
-            self.title_label.pack(pady=20)
+            self.title_label.pack(**MAIN_WINDOW_TITLE_CONFIG)
 
             self.employee_table_frame = tk.Frame(self)
             self.employee_table_frame.pack(pady=10)

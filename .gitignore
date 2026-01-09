@@ -1,5 +1,5 @@
 venv/
-
+imgs/
 __pycache__/
 *.py[cod]
 teste.py

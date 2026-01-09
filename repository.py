@@ -40,7 +40,6 @@ def add_employee(name, role, salary) -> tuple:
 def get_employee(str_id) -> tuple:
     if database_is_empty():
         return (True, None)
-    
     try:
         id = int(str_id)
 
@@ -88,8 +87,6 @@ def update_employee(name, role, salary, id) -> bool:
                             (new_employee.name, new_employee.role, new_employee.salary, new_employee.id))    
             
             return (True, f"Success! New data for Employee {new_employee.id}!")
-    except Exception as e:
-        return(False, f"Repository error: {e}")
     except RequiredFieldsError as e:
         return (False, f"Input Error: {e}")
     except TypeError as e:

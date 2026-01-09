@@ -81,6 +81,14 @@ MAIN_WINDOW_LABEL_STYLE = {'font': ("Aptos", 12, "bold"),
 
 MAIN_WINDOW_LABEL_CONFIG = {'pady':(10,5)}
 
+RESULT_LABEL_STYLE = {'font': ("Aptos", 14, "bold"),
+                'relief': "flat",
+                'fg' : "#FFFFFF",
+                'bg': WINDOW_BG_COLOR
+}
+
+RESULT_LABEL_CONFIG = {'pady': 50}
+
 SUBMIT_BTN_STYLE = {'font': ("Aptos", 10, "bold"),
             'fg': "#FFFFFF",
             'bg': "#4d4d4d",
