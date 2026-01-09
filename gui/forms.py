@@ -5,7 +5,6 @@ from tkinter import messagebox
 from tkinter import ttk
 from .Styles import *
 import Repository as repo
-import Models as models
 
 
 
@@ -14,57 +13,60 @@ class AppWindow(tk.Tk):
         super().__init__()
         self.title("Simple Crud")
         
-        self.geometry(window_geometry_size)
+        self.geometry(WINDOW_SIZE)
         self.resizable(False, False)
+        self.configure(bg=WINDOW_BG_COLOR)
 
         self.generate_widgets()
 
     def generate_widgets(self):
-        self.welcome_label = tk.Label(self, text="Welcome to Simple Crud!", font=(title_font_style))
-        self.welcome_label.pack(pady=20, expand=True)
+        self.title_label = tk.Label(self, text="Welcome to Simple Crud!", **APP_WINDOW_TITLE_STYLE)
+        self.title_label.pack(**APP_WINDOW_TITLE_CONFIG)
 
-        self.enter_button = tk.Button(self, text="Enter", width=enter_window['BUTTON_WIDTH'], command= lambda: MainWindow(self))
-        self.enter_button.pack(pady=enter_window['BUTTON_PADY'])    
+        self.enter_button = tk.Button(self, text="Enter", **APP_WINDOW_BTN_STYLE, command= lambda: MainWindow(self))
+        self.enter_button.pack(**APP_WINDOW_BTN_CONFIG)    
 
-        self.exit_button = tk.Button(self, text="Exit", width=enter_window['BUTTON_WIDTH'], command=self.destroy)
-        self.exit_button.pack(pady=enter_window['BUTTON_PADY'])
+        self.exit_button = tk.Button(self, text="Exit", **APP_WINDOW_BTN_STYLE, command=self.destroy)
+        self.exit_button.pack(**APP_WINDOW_BTN_CONFIG)
 
-
-        self.autor_label = tk.Label(self, text="made by: Matheus Gana", font=(autor_font_style))
-        self.autor_label.pack(pady=50)
+        self.autor_label = tk.Label(self, text="made by: Matheus Gana", **AUTOR_LABEL_STYLE)
+        self.autor_label.pack(**AUTOR_LABEL_CONFIG)
 
 class TemplateWindow(tk.Toplevel):
     def __init__(self, base):
         super().__init__(base)
-        self.geometry(window_geometry_size)
+        self.geometry(WINDOW_SIZE)
+        self.configure(bg=WINDOW_BG_COLOR)
 
         #Abstract func to generete widgets
         self.generate_widgets()
-
         #Back Button
-        tk.Button(self, text="Exit",command=self.destroy).pack(side="bottom", pady=15)
+        tk.Button(self, text="Back", **BACK_BTN_STYLE,command=self.destroy).pack(side="bottom", pady=15)
+        self.focus_force()
+        self.grab_set()
 
 class MainWindow(TemplateWindow):
     def __init__(self, base):
         super().__init__(base)
 
     def generate_widgets(self):
-        self.title("Crud System")
+        self.title_label = tk.Label(self, text="Crud System", **MAIN_WINDOW_TITLE_STYLE)
+        self.title_label.pack(**MAIN_WINDOW_TITLE_CONFIG)
 
-        self.insert_button = tk.Button(self, text="Insert Employee", width=template_window['BUTTON_WIDTH'], command= lambda: InsertEmployeeWindow(self))
-        self.insert_button.pack(pady=(30,5), expand=True)
+        self.insert_button = tk.Button(self, text="Insert Employee", **MAIN_WINDOW_BTN_STYLE, command= lambda: InsertEmployeeWindow(self))
+        self.insert_button.pack(**MAIN_WINDOW_BTN_CONFIG)
 
-        self.read_one_employee_button = tk.Button(self, text="Read One Employee", width=template_window['BUTTON_WIDTH'], command= lambda: ReadOneEmployeeWindow(self))
-        self.read_one_employee_button.pack(pady=template_window['BUTTON_PADY'], expand=True)
+        self.read_one_employee_button = tk.Button(self, text="Read One Employee", **MAIN_WINDOW_BTN_STYLE, command= lambda: ReadOneEmployeeWindow(self))
+        self.read_one_employee_button.pack(**MAIN_WINDOW_BTN_CONFIG)
 
-        self.read_all_employees_button = tk.Button(self, text="Read All Employee", width=template_window['BUTTON_WIDTH'], command= lambda: ReadAllEmployeeWindow(self))
-        self.read_all_employees_button.pack(pady=template_window['BUTTON_PADY'], expand=True)
+        self.read_all_employees_button = tk.Button(self, text="Read All Employee", **MAIN_WINDOW_BTN_STYLE, command= lambda: ReadAllEmployeeWindow(self))
+        self.read_all_employees_button.pack(**MAIN_WINDOW_BTN_CONFIG)
 
-        self.update_employee_button = tk.Button(self, text="Update Employee", width=template_window['BUTTON_WIDTH'], command= lambda: UpdateEmployeeWindow(self))
-        self.update_employee_button.pack(pady=template_window['BUTTON_PADY'], expand=True)
+        self.update_employee_button = tk.Button(self, text="Update Employee", **MAIN_WINDOW_BTN_STYLE, command= lambda: UpdateEmployeeWindow(self))
+        self.update_employee_button.pack(**MAIN_WINDOW_BTN_CONFIG)
 
-        self.delete_employee_button = tk.Button(self, text="Delete Employee", width=template_window['BUTTON_WIDTH'], command= lambda: DeleteEmployeeWindow(self))
-        self.delete_employee_button.pack(pady=template_window['BUTTON_PADY'], expand=True)
+        self.delete_employee_button = tk.Button(self, text="Delete Employee", **MAIN_WINDOW_BTN_STYLE, command= lambda: DeleteEmployeeWindow(self))
+        self.delete_employee_button.pack(**MAIN_WINDOW_BTN_CONFIG)
 
 class InsertEmployeeWindow(TemplateWindow):
     def __init__(self,base):
@@ -79,38 +81,40 @@ class InsertEmployeeWindow(TemplateWindow):
         }    
         
         status, result = repo.add_employee(data['Name'], data['Role'], data['Salary'])
-
-        print(f"Form Submitted: Name: {data['Name']}, Role: {data['Role']}, Salary: {data['Salary']}")
         
         if status:
+            print(f"Form Submitted: Name: {data['Name']}, Role: {data['Role']}, Salary: {data['Salary']}")
             tk.messagebox.showinfo("Success", result)
+            self.focus_force()
         else:
             messagebox.showerror("Error", result)
+            self.focus_force()
 
     
     def generate_widgets(self):
-        self.title("Insert Employee")
+        self.title_label = tk.Label(self, text="Insert Employee", **MAIN_WINDOW_TITLE_STYLE)
+        self.title_label.pack(**MAIN_WINDOW_TITLE_CONFIG)
 
-        self.name_label = tk.Label(self, text="Employee Name")
-        self.name_label.pack(pady=(10,5), expand=True)
+        self.name_label = tk.Label(self, text="Employee Name", **MAIN_WINDOW_LABEL_STYLE)
+        self.name_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.name_input = tk.Entry(self)
-        self.name_input.pack(pady=5, expand=True)
+        self.name_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.name_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.role_label = tk.Label(self, text="Employee Role")
-        self.role_label.pack(pady=(10,5), expand=True)
+        self.role_label = tk.Label(self, text="Employee Role", **MAIN_WINDOW_LABEL_STYLE)
+        self.role_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.role_input = tk.Entry(self)
-        self.role_input.pack(pady=5, expand=True)
+        self.role_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.role_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.salary_label = tk.Label(self, text="Employee Salary")
-        self.salary_label.pack(pady=(10,5), expand=True)
+        self.salary_label = tk.Label(self, text="Employee Salary", **MAIN_WINDOW_LABEL_STYLE)
+        self.salary_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.salary_input = tk.Entry(self)
-        self.salary_input.pack(pady=5, expand=True)
+        self.salary_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.salary_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
-        self.submit_btn.pack(pady=5, expand=True)
+        self.submit_btn = tk.Button(self, text="Submit", **SUBMIT_BTN_STYLE, command=self.submit_form)
+        self.submit_btn.pack(**SUBMIT_BTN_CONFIG)
 
 class ReadOneEmployeeWindow(TemplateWindow):
     def __init__(self,base):
@@ -124,7 +128,7 @@ class ReadOneEmployeeWindow(TemplateWindow):
 
         if not status:
             messagebox.showerror("Database Error", result)
-
+            self.destroy()
         elif not result:
             self.empty_employee_list_label = tk.Label(self, text="Employee table is empty", font=("Arial", 14,"bold"))
             self.empty_employee_list_label.pack(pady=50)
@@ -134,38 +138,36 @@ class ReadOneEmployeeWindow(TemplateWindow):
 
     
     def generate_widgets(self):
-        self.title("Read One Employee")
+        self.title_label = tk.Label(self, text="Read One Employee", **MAIN_WINDOW_TITLE_STYLE)
+        self.title_label.pack(**MAIN_WINDOW_TITLE_CONFIG)
 
-        self.title_label = tk.Label(self, text="Read One Employee", font=("Arial", 16, "bold"))
-        self.title_label.pack(pady=20)
+        self.id_label = tk.Label(self, text="Employee ID", **MAIN_WINDOW_LABEL_STYLE)
+        self.id_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.id_label = tk.Label(self, text="Employee ID")
-        self.id_label.pack(pady=(10,5))
+        self.id_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.id_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.id_input = tk.Entry(self)
-        self.id_input.pack(pady=5)
-
-        self.submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
-        self.submit_btn.pack(pady=5)
+        self.submit_btn = tk.Button(self, text="Submit", **SUBMIT_BTN_STYLE, command=self.submit_form)
+        self.submit_btn.pack(**SUBMIT_BTN_CONFIG)
 
 class ReadAllEmployeeWindow(TemplateWindow):
     def __init__(self,base):
         super().__init__(base)
     
     def generate_widgets(self):
-        self.title("Read All Employees")
 
         status, result = repo.get_all_employees()
 
         if not status:
             messagebox.showerror("Database Error", result)
+            self.destroy()
         
         elif not result:
-            self.empty_employee_list_label = tk.Label(self, text="Employee table is empty", font=("Arial", 14,"bold"))
-            self.empty_employee_list_label.pack(pady=50)
-        
+            messagebox.showwarning("Warning", "Database is empty!")
+            self.destroy()
+
         else:
-            self.title_label = tk.Label(self, text="Employee Table", font=("Arial", 16, "bold"))
+            self.title_label = tk.Label(self, text="Employee Table", **MAIN_WINDOW_TITLE_STYLE)
             self.title_label.pack(pady=20)
 
             self.employee_table_frame = tk.Frame(self)
@@ -195,6 +197,9 @@ class ReadAllEmployeeWindow(TemplateWindow):
 class UpdateEmployeeWindow(TemplateWindow):
     def __init__(self,base):
         super().__init__(base)
+        messagebox.showinfo("Info", "Enter the employee ID you want to change," \
+        " then enter the new information.")
+        self.focus_force()
     
     def submit_form(self):
         data = {
@@ -214,37 +219,35 @@ class UpdateEmployeeWindow(TemplateWindow):
             messagebox.showerror("Error", result)
 
     def generate_widgets(self):
-        self.title("Update Employee")
+        self.title_label = tk.Label(self, text="Update Employee", **MAIN_WINDOW_TITLE_STYLE)
+        self.title_label.pack(**MAIN_WINDOW_TITLE_CONFIG)
 
-        self.title_label = tk.Label(self, text="Update Employee", font=("Arial", 16, "bold"))
-        self.title_label.pack(pady=20)
+        self.id_label = tk.Label(self, text="Employee ID", **MAIN_WINDOW_LABEL_STYLE)
+        self.id_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.id_label = tk.Label(self, text="Employee ID")
-        self.id_label.pack(pady=(10,5))
+        self.id_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.id_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.id_input = tk.Entry(self)
-        self.id_input.pack(pady=5)
+        self.name_label = tk.Label(self, text="Employee Name", **MAIN_WINDOW_LABEL_STYLE)
+        self.name_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.name_label = tk.Label(self, text="Employee Name")
-        self.name_label.pack(pady=(10,5), expand=True)
+        self.name_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.name_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.name_input = tk.Entry(self)
-        self.name_input.pack(pady=5, expand=True)
+        self.role_label = tk.Label(self, text="Employee Role", **MAIN_WINDOW_LABEL_STYLE)
+        self.role_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.role_label = tk.Label(self, text="Employee Role")
-        self.role_label.pack(pady=(10,5), expand=True)
+        self.role_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.role_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.role_input = tk.Entry(self)
-        self.role_input.pack(pady=5, expand=True)
+        self.salary_label = tk.Label(self, text="Employee Salary", **MAIN_WINDOW_LABEL_STYLE)
+        self.salary_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.salary_label = tk.Label(self, text="Employee Salary")
-        self.salary_label.pack(pady=(10,5), expand=True)
+        self.salary_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.salary_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.salary_input = tk.Entry(self)
-        self.salary_input.pack(pady=5, expand=True)
-
-        self.submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
-        self.submit_btn.pack(pady=5, expand=True)
+        self.submit_btn = tk.Button(self, text="Submit", **SUBMIT_BTN_STYLE, command=self.submit_form)
+        self.submit_btn.pack(**SUBMIT_BTN_CONFIG)
 
 class DeleteEmployeeWindow(TemplateWindow):
     def __init__(self,base):
@@ -258,20 +261,20 @@ class DeleteEmployeeWindow(TemplateWindow):
         
         if status:
             tk.messagebox.showinfo("Success", result)
+            self.focus_force()
         else:
             messagebox.showerror("Error", result)
+            self.destroy()
     
     def generate_widgets(self):
-        self.title("Delete Employee")
+        self.title_label = tk.Label(self, text="Delete Employee", **MAIN_WINDOW_TITLE_STYLE)
+        self.title_label.pack(**MAIN_WINDOW_TITLE_CONFIG)
 
-        self.title_label = tk.Label(self, text="Delete Employee", font=("Arial", 16, "bold"))
-        self.title_label.pack(pady=20)
+        self.id_label = tk.Label(self, text="Employee ID", **MAIN_WINDOW_LABEL_STYLE)
+        self.id_label.pack(**MAIN_WINDOW_LABEL_CONFIG)
 
-        self.id_label = tk.Label(self, text="Employee ID")
-        self.id_label.pack(pady=(10,5))
+        self.id_input = tk.Entry(self, **MAIN_WINDOW_INPUT_STYLE)
+        self.id_input.pack(**MAIN_WINDOW_INPUT_CONFIG)
 
-        self.id_input = tk.Entry(self)
-        self.id_input.pack(pady=5)
-
-        self.submit_btn = tk.Button(self, text="Submit", command=self.submit_form)
-        self.submit_btn.pack(pady=5)
+        self.submit_btn = tk.Button(self, text="Submit", **SUBMIT_BTN_STYLE, command=self.submit_form)
+        self.submit_btn.pack(**SUBMIT_BTN_CONFIG)

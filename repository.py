@@ -16,11 +16,10 @@ def database_is_empty():
         return (False, f"Repository error: {e}")
 
 def add_employee(name, role, salary) -> tuple:
-    if not all([name, role, salary]):
-        raise RequiredFieldsError("All fields are required!")
-
     try:
 
+        if not all([name, role, salary]):
+            raise RequiredFieldsError("All fields are required!")
         employee_obj = Employee(name, role, float(salary))
 
         with DatabaseManager("data.db") as cursor:
@@ -30,11 +29,11 @@ def add_employee(name, role, salary) -> tuple:
             return (True, f"Success! Welcome {employee_obj.name}!")
     
     except RequiredFieldsError as e:
-        return (False, f"Input Error {e}")
+        return (False, f"Input Error: {e}")
     except TypeError as e:
-        return (False, f"Input Error {e}")
+        return (False, f"Input Error: {e}")
     except ValueError as e:
-        return (False, f"Input Error {e}")
+        return (False, f"Input Error: {e}")
     except Exception as e:
         return (False, f"Repository error: {e}")
 
@@ -78,10 +77,9 @@ def update_employee(name, role, salary, id) -> bool:
     if database_is_empty():
         return (False, "Database is empty")
     
-    if not all([name, role, salary, id]):
-        raise RequiredFieldsError("All fields are required!")
-    
     try:
+        if not all([name, role, salary, id]):
+            raise RequiredFieldsError("All fields are required!")
 
         new_employee = Employee(name=name,role=role,salary=float(salary),id=id)
 
@@ -93,11 +91,11 @@ def update_employee(name, role, salary, id) -> bool:
     except Exception as e:
         return(False, f"Repository error: {e}")
     except RequiredFieldsError as e:
-        return (False, f"Input Error {e}")
+        return (False, f"Input Error: {e}")
     except TypeError as e:
-        return (False, f"Input Error {e}")
+        return (False, f"Input Error: {e}")
     except ValueError as e:
-        return (False, f"Input Error {e}")
+        return (False, f"Input Error: {e}")
     except Exception as e:
         return (False, f"Repository error: {e}")
 
