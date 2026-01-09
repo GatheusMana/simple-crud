@@ -65,7 +65,7 @@ The main goals of this project were:
 - Practice building a complete CRUD system
 - Understand data flow between GUI, business logic, and database
 - Apply object-oriented principles in a real project
-- Learn when to prioritize structure and when to prioritize delivery-
+- Learn when to prioritize structure and when to prioritize delivery
 - Finish and ship a functional application
 
 ## 📌 Notes
