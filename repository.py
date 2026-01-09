@@ -48,7 +48,7 @@ def get_employee(str_id) -> tuple:
             emp_id, name, role, salary = employee_data
             return (True, Employee(name, role, salary, emp_id))
     
-    except ValueError as e:
+    except TypeError as e:
         return (False, f"ID must be a integer number!")
     except Exception as e:
         return (False, f"Repository error: {e}")
